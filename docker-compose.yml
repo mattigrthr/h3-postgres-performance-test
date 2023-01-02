@@ -1,0 +1,18 @@
+version: '3.1'
+
+services:
+  postgres:
+    container_name: postgres
+    image: kartoza/postgis:14-3.1
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=h3_performance_test
+      - POSTGRES_MULTIPLE_EXTENSIONS=postgis,hstore,postgis_topology,postgis_raster,pgrouting
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./tmp/db/postgres:/var/lib/postgresql
+    profiles:
+      - network
+      - database
