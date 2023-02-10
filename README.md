@@ -10,6 +10,14 @@ First, make sure you have Docker running. Then, from within the root directory, 
 docker-compose --profile database up
 ```
 
+## Start the performance test
+
+To start the performance test, run:
+
+```zsh
+npm start
+```
+
 ### Resources
 
 For generating our test workloads, we're using the coordinates of cities with more than 1,000 inhabitants.

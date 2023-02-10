@@ -1,6 +1,7 @@
 import prompts from 'prompts';
-import { connectToDatabase, sequelize } from './database/connection';
+import { connectToDatabase } from './database/connection';
 import City from './database/models/City';
+import { runCityPerformanceTest } from './PerformanceTest';
 import { generateCityWorkLoad } from './WorkLoadGenerator';
 
 const start = async () => {
@@ -17,7 +18,9 @@ const start = async () => {
 
   await connectToDatabase();
     
-  if (response.action === "generate") {
+  if (response.action === "start") {
+    await runCityPerformanceTest();
+  } else if (response.action === "generate") {
     await City.sync({ force: true, logging: false });
     console.info("💧 Dropped existing data");
     await generateCityWorkLoad();
