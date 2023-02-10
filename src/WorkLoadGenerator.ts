@@ -33,12 +33,12 @@ type CityObject = {
     h3_15: string;
 }
 
-const getRandomCities = async () => {
+const getRandomCities = async (amount: number) => {
     return new Promise(async (resolve, reject) => {
         console.info("🧺 Picking random cities");
 
         const randomCities = await sequelize.query(
-            "SELECT id, lat, lng, h3_0, h3_1, h3_2, h3_3, h3_4, h3_5, h3_6, h3_7, h3_8, h3_9, h3_10, h3_11, h3_12, h3_13, h3_14, h3_15 FROM cities ORDER BY RANDOM() LIMIT 10000",
+            `SELECT id, lat, lng, h3_0, h3_1, h3_2, h3_3, h3_4, h3_5, h3_6, h3_7, h3_8, h3_9, h3_10, h3_11, h3_12, h3_13, h3_14, h3_15 FROM cities ORDER BY RANDOM() LIMIT ${amount}`,
             {
                 logging: false,
                 raw: true,
@@ -69,10 +69,6 @@ export const generateCityWorkLoad = async () => {
         console.info("🧬 Loading city data");
 
         const cities: CityObject[] = [];
-        const parser = parse({
-            delimiter: ':'
-          });
-          parser.read()
         const readStream = fs.createReadStream("resources/geonames-all-cities-with-a-population-1000.csv");
     
         readStream.pipe(parse({ 
@@ -80,7 +76,7 @@ export const generateCityWorkLoad = async () => {
             from: 2,
             columns: ['geoname_id', 'name', 'ascii_name', 'alternate_names', 'feature_class', 'feature_code', 'country_code', 'country_name_en', 'country_code_2', 'admin_1_code', 'admin_2_code', 'admin_3_code', 'admin_4_code', 'population', 'elevation', 'digital_elevation_model', 'timezone', 'modification_date', 'label_en', 'coordinates'] 
         }))
-            .on("data", function (row) {
+            .on("data", (row) => {
                 const coordinatesSplit = row.coordinates.split(',')
                 const lat = parseFloat(coordinatesSplit[0]);
                 const lng = parseFloat(coordinatesSplit[1]);
@@ -116,7 +112,7 @@ export const generateCityWorkLoad = async () => {
             .on("end", async () => {
                 await City.bulkCreate(cities, { logging: false });
                 console.info("✅ Successfully loaded city data");
-                await getRandomCities();
+                await getRandomCities(100);
     
                 resolve();
             });
