@@ -75,6 +75,10 @@ City.init(
         indexes: [
             {
                 unique: false,
+                fields: ["point"]
+            },
+            {
+                unique: false,
                 fields: ["h3_0"]
             },
             {
